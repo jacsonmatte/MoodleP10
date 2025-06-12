@@ -1,0 +1,16 @@
+.activityname {
+  color: #284292;
+  font-family: sans-serif;
+  transition: background-color 0.3s ease !important; /* Transição para background-color */
+  /* ou transition: color 0.3s ease; para transição de texto */
+  /* ou transition: all 0.3s ease; para transicionar todas as propriedades */
+}
+
+.activityname:hover {
+  background-color: #fad52d !important; /* Ou color: #fad52d; ou border-color: #fad52d; */
+}
+.activityname h5 {
+  font-weight: bold !important;
+}
+
+li.activity.subtile{margin:2px !important}
