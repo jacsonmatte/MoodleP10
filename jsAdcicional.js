@@ -82,3 +82,99 @@
             });
         });
     </script>
+
+
+<script>
+// Aguarda o carregamento completo da página.
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- 1. IDENTIFICAR OS ELEMENTOS PRINCIPAIS ---
+    const emailFieldContainer = document.getElementById('fitem_id_email');
+    const departmentFieldContainer = document.getElementById('fitem_id_department');
+
+    if (emailFieldContainer && departmentFieldContainer) {
+        
+        // --- 2. REORDENAR O CAMPO ---
+        emailFieldContainer.insertAdjacentElement('afterend', departmentFieldContainer);
+
+        // --- 3. MANIPULAR O CAMPO DEPARTAMENTO ---
+        const originalInput = document.getElementById('id_department');
+        const labelContainer = departmentFieldContainer.querySelector('.col-form-label');
+
+        if (originalInput && labelContainer) {
+            
+            // a) Pega o valor já salvo (importante para a página de edição).
+            const savedValue = originalInput.value;
+            
+            // b) Esconde o campo de texto original, mas o mantém no formulário.
+            //    Usar type="hidden" é melhor que display:none, pois garante o envio do valor.
+            originalInput.type = 'hidden';
+
+            // c) Define as opções para a caixa de seleção.
+            const departmentOptions = [
+                'ATENDENTE', 
+                'ADMINISTRATIVO', 
+                'CAIXA', 
+                'ESTOQUISTA', 
+                'FISCAL DE LOJA', 
+                'FRANQUEADO', 
+                'GERENTE DE LOJA', 
+                'SERVIÇOS GERAIS', 
+                'VENDEDOR(A)'
+            ];
+
+            // d) Cria o novo elemento <select> que será visível para o usuário.
+            const newSelect = document.createElement('select');
+            newSelect.id = 'id_department_select'; // ID diferente para não haver conflito.
+            newSelect.className = 'form-control custom-select';
+            newSelect.required = true;
+
+            // e) Cria a primeira opção (placeholder).
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'Selecione um departamento...';
+            placeholderOption.disabled = true;
+            // Se não houver valor salvo, o placeholder fica selecionado.
+            if (!savedValue) {
+                placeholderOption.selected = true;
+            }
+            newSelect.appendChild(placeholderOption);
+
+            // f) Adiciona as opções, marcando a que foi salva anteriormente.
+            departmentOptions.forEach(optionText => {
+                const option = document.createElement('option');
+                option.value = optionText;
+                option.textContent = optionText;
+                // Verifica se esta é a opção que deve estar selecionada.
+                if (optionText === savedValue) {
+                    option.selected = true;
+                }
+                newSelect.appendChild(option);
+            });
+
+            // g) Adiciona um "ouvinte" que atualiza o campo escondido sempre que o select é alterado.
+            newSelect.addEventListener('change', function() {
+                originalInput.value = this.value;
+            });
+
+            // h) Insere o novo select no formulário, logo após o input original (que agora está escondido).
+            originalInput.insertAdjacentElement('afterend', newSelect);
+
+            // i) Adiciona o ícone visual de campo obrigatório.
+            const requiredIconHTML = `
+                <div class="form-label-addon d-flex align-items-center align-self-start">
+                    <div class="text-danger" title="Necessários">
+                        <i class="icon fa fa-circle-exclamation text-danger fa-fw" title="Necessários" role="img" aria-label="Necessários"></i>
+                    </div>
+                </div>`;
+            
+            // Evita adicionar o ícone múltiplas vezes se o script rodar de novo.
+            if (!labelContainer.querySelector('.fa-circle-exclamation')) {
+                labelContainer.insertAdjacentHTML('beforeend', requiredIconHTML);
+            }
+        }
+    } else {
+        console.error('Moodle script: Não foi possível encontrar os containers dos campos de email ou departamento.');
+    }
+});
+</script>
